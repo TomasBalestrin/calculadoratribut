@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de Economia Tributária</title>
+<meta name="description" content="Descubra as possibilidades de economia tributária da sua clínica através da Equiparação Hospitalar. Solicite uma análise personalizada.">
+<meta name="theme-color" content="#1B4D4E">
+<meta property="og:title" content="Calculadora de Economia Tributária">
+<meta property="og:description" content="Descubra as possibilidades de economia tributária da sua clínica através da Equiparação Hospitalar.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO: edite só este bloco
+   ===================================================================== */
+window.CONFIG = {
+  // Marca
+  brandName: "Seu Escritório",
+  brandInitials: "SE",              // aparece no lugar do logo se logoUrl estiver vazio
+  logoUrl: "",                      // link de uma imagem quadrada do logo (opcional)
+
+  // Especialista que aparece na capa
+  specialist: {
+    name: "Nome da Especialista",
+    role: "Especialista em estratégias tributárias | Seu Escritório",
+    photoUrl: ""                    // link da foto (opcional). Vazio mostra o ícone
+  },
+
+  // WhatsApp que recebe os leads: DDI + DDD + número, só números
+  whatsappNumber: "5511921473517",
+  whatsappIntro: "Olá! Acabei de fazer a simulação de economia tributária e gostaria de falar com um especialista.",
+
+  // Pixel da Meta: cole só o número do ID. Vazio = pixel desligado
+  pixelId: "1331505969087035",
+
+  // Link da política de privacidade
+  privacyPolicyUrl: "#",
+
+  // Opcional: URL de webhook (n8n, Make, Zapier, CRM) para salvar o lead no envio do formulário
+  webhookUrl: "",
+
+  // true = mostra as UTMs no fim da mensagem do WhatsApp
+  includeUtmsInMessage: false,
+
+  // true = ao enviar o formulário, já leva direto para o WhatsApp (sem tela de obrigado)
+  redirectOnSubmit: false
+};
+</script>
+
+<style>
+:root{
+  --petrol:#154B4C;
+  --petrol-deep:#073233;
+  --copper:#BA7331;
+  --copper-soft:#CB905B;
+  --offwhite:#F5F1EA;
+  --sage:#D3DDDC;
+  --danger:#F47C6B;
+  --border:rgba(211,221,220,.18);
+  --input:rgba(211,221,220,.28);
+  --card:rgba(7,50,51,.45);
+  --serif:"Cormorant Garamond", Georgia, serif;
+  --sans:Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@supports (color: oklch(0% 0 0)){
+  :root{
+    --petrol:oklch(38% .055 197);
+    --petrol-deep:oklch(29% .045 197);
+    --copper:oklch(62% .12 60);
+    --copper-soft:oklch(70% .1 62);
+    --offwhite:oklch(96% .01 85);
+    --sage:oklch(89% .012 185);
+    --danger:oklch(72% .15 30);
+    --border:oklch(89% .012 185 / .18);
+    --input:oklch(89% .012 185 / .28);
+    --card:oklch(29% .045 197 / .45);
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--petrol);
+  color:var(--offwhite);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  min-height:100vh;
+  min-height:100dvh;
+}
+svg{display:block;flex:none}
+button{font:inherit}
+.container{max-width:448px;margin:0 auto;padding:32px 24px 48px}
+
+/* telas */
+.screen{display:none}
+.screen.active{display:block;animation:fadeUp .45s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.screen.active{animation:none}}
+
+/* logo */
+.logo{display:grid;place-items:center;margin:0 auto;background:rgba(7,50,51,.55);color:var(--copper);font-family:var(--serif);font-weight:500;letter-spacing:-.06em;overflow:hidden;border-radius:2px}
+.logo img{width:100%;height:100%;object-fit:contain}
+.logo-lg{width:80px;height:80px;font-size:34px}
+.logo-sm{width:36px;height:36px;font-size:16px}
+
+/* tipografia */
+.eyebrow{margin-top:32px;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+.serif{font-family:var(--serif);font-weight:500}
+.highlight{font-style:italic;color:var(--copper-soft)}
+h1{margin:0;font-family:var(--serif);font-weight:500;color:var(--offwhite)}
+.hero-title{margin-top:12px;font-size:2.6rem;line-height:1.02}
+.q-title{margin-top:40px;font-size:2.15rem;line-height:1.08}
+@media (min-width:640px){
+  .hero-title{font-size:3rem}
+  .q-title{font-size:2.5rem}
+}
+.text-sage{color:var(--sage)}
+.lead{margin:16px auto 0;font-size:.9rem;line-height:1.625;color:var(--sage)}
+.sub{margin-top:16px;font-size:.9rem;line-height:1.625;color:var(--sage)}
+
+/* capa */
+#s1{text-align:center}
+.benefits{list-style:none;margin:32px 0 0;padding:0;display:grid;gap:12px;text-align:left}
+.benefits li{display:flex;align-items:center;gap:12px;font-size:.9rem;line-height:1.4}
+.benefits svg{color:var(--copper)}
+.specialist{margin-top:24px;padding:16px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;text-align:left}
+.avatar{width:56px;height:56px;border-radius:50%;background:var(--petrol-deep);border:1px solid rgba(186,115,49,.6);display:grid;place-items:center;color:var(--copper);flex:none;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.spec-name{font-family:var(--serif);font-size:1.25rem;line-height:1.25}
+.spec-role{margin-top:2px;font-size:.75rem;line-height:1.4;color:var(--sage)}
+.note{margin-top:12px;font-size:.75rem;color:var(--sage);text-align:center}
+
+/* botão principal */
+.btn-cta{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;height:56px;padding:0 24px;border:0;border-radius:6px;
+  background:var(--copper);color:#fff;text-decoration:none;
+  font-family:var(--sans);font-weight:600;font-size:.8125rem;letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;transition:background-color .2s ease, transform .1s ease, opacity .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-cta:hover{background:var(--copper-soft)}
+.btn-cta:active{transform:scale(.99)}
+.btn-cta:disabled{opacity:.5;pointer-events:none}
+.btn-cta:focus-visible{outline:2px solid var(--copper-soft);outline-offset:3px}
+#s1 .btn-cta{margin-top:24px}
+.screen .btn-cta.mt{margin-top:32px}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* barra de progresso e cabeçalho das etapas */
+.progress{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(7,50,51,.7);z-index:10;display:none}
+.progress span{display:block;height:100%;width:0;background:var(--copper);transition:width .45s ease}
+.step-header{display:none;align-items:center;justify-content:space-between;height:40px}
+.step-header > *{flex:1}
+.back{display:inline-flex;align-items:center;gap:6px;padding:0;border:0;background:none;color:var(--sage);font-size:.75rem;cursor:pointer;justify-self:start;width:max-content}
+.back:hover{color:var(--offwhite)}
+.counter{text-align:right;font-size:.7rem;font-weight:600;letter-spacing:.2em;color:var(--copper)}
+.header-left{display:flex}
+.header-mid{display:flex;justify-content:center}
+.is-hidden{visibility:hidden}
+
+/* campo de valor */
+.money{
+  margin-top:32px;width:100%;height:64px;padding:0 20px;
+  background:var(--petrol-deep);border:1px solid var(--input);border-radius:6px;
+  color:var(--offwhite);font-family:var(--serif);font-size:1.6rem;outline:none;
+  transition:border-color .2s ease;
+}
+.money::placeholder{color:rgba(211,221,220,.45)}
+.money:focus{border-color:var(--copper)}
+.helper{margin-top:8px;font-size:.7rem;line-height:1.5;color:var(--sage)}
+
+/* opções */
+.options{margin-top:28px;display:grid;gap:12px}
+.opt{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  width:100%;min-height:56px;padding:12px 16px;
+  background:var(--card);border:1px solid var(--border);border-radius:6px;
+  color:var(--offwhite);font-size:.9rem;text-align:left;cursor:pointer;
+  transition:border-color .2s ease, background-color .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.opt:hover{border-color:rgba(186,115,49,.55)}
+.radio{width:18px;height:18px;border-radius:50%;border:1px solid rgba(211,221,220,.5);display:grid;place-items:center;flex:none;transition:border-color .2s ease}
+.opt.selected{border-color:var(--copper);background:rgba(7,50,51,.75)}
+.opt.selected .radio{border-color:var(--copper)}
+.opt.selected .radio::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--copper)}
+.italic-note{margin-top:16px;font-size:.75rem;font-style:italic;color:var(--sage)}
+
+/* formulário */
+.form{margin-top:28px}
+.field + .field{margin-top:20px}
+.field label{display:block;margin-bottom:8px;font-size:.75rem;font-weight:600;color:var(--offwhite)}
+.field label span{font-weight:400;color:var(--sage)}
+.input{
+  width:100%;height:52px;padding:0 16px;
+  background:var(--petrol-deep);border:1px solid var(--input);border-radius:6px;
+  color:var(--offwhite);font-family:var(--sans);font-size:.9rem;outline:none;
+  transition:border-color .2s ease;
+}
+.input::placeholder{color:rgba(211,221,220,.5)}
+.input:focus{border-color:var(--copper)}
+.input.invalid{border-color:var(--danger)}
+.error{display:none;margin-top:6px;font-size:.7rem;color:var(--danger)}
+.error.show{display:block}
+.consent{margin-top:24px;display:flex;align-items:flex-start;gap:12px;font-size:.75rem;line-height:1.625;color:var(--sage);cursor:pointer}
+.consent input{
+  appearance:none;-webkit-appearance:none;margin:3px 0 0;flex:none;
+  width:16px;height:16px;border-radius:3px;border:1px solid rgba(186,115,49,.7);background:var(--petrol-deep);cursor:pointer;
+  display:grid;place-items:center;
+}
+.consent input:checked{background:var(--copper);border-color:var(--copper)}
+.consent input:checked::after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:translateY(-1px) rotate(-45deg)}
+.consent input:focus-visible{outline:2px solid var(--copper-soft);outline-offset:2px}
+.consent a,.privacy-note a{color:var(--copper-soft);text-decoration:underline;text-underline-offset:2px}
+.privacy-note{margin-top:16px;display:flex;align-items:flex-start;gap:8px;font-size:.7rem;line-height:1.625;color:var(--sage)}
+.privacy-note svg{margin-top:3px;color:var(--copper)}
+
+/* tela de sucesso */
+.success-icon{margin-top:40px;width:56px;height:56px;border-radius:50%;background:var(--petrol-deep);border:1px solid rgba(186,115,49,.6);display:grid;place-items:center;color:var(--copper)}
+.success-title{margin-top:24px;font-size:2.15rem;line-height:1.08}
+@media (min-width:640px){.success-title{font-size:2.5rem}}
+.success-text{margin-top:20px;font-size:.95rem;line-height:1.625;color:var(--sage)}
+.success-text + .success-text{margin-top:12px}
+.antecipar{margin-top:40px;padding-top:32px;border-top:1px solid var(--border)}
+.antecipar h2{margin:0;font-family:var(--serif);font-weight:500;font-size:1.6rem;line-height:1.15}
+.antecipar .btn-cta{margin-top:20px}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"><span id="progressBar"></span></div>
+
+<main class="container">
+
+  <!-- Cabeçalho das etapas 2 a 5 -->
+  <div class="step-header" id="stepHeader">
+    <div class="header-left">
+      <button class="back" id="backBtn" type="button" aria-label="Voltar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Voltar
+      </button>
+    </div>
+    <div class="header-mid"><div class="logo logo-sm" data-brand-logo></div></div>
+    <div class="counter" id="counter">02 de 05</div>
+  </div>
+
+  <!-- 01 · Capa -->
+  <section class="screen active" id="s1" data-step="1">
+    <div class="logo logo-lg" data-brand-logo></div>
+    <div class="eyebrow">Calculadora de Economia Tributária</div>
+    <h1 class="hero-title">Quanto sua clínica poderia <span class="highlight">economizar</span> em impostos?</h1>
+    <p class="lead">Descubra seu potencial de economia tributária por meio da Equiparação Hospitalar, um benefício previsto em lei que pode reduzir a tributação de IRPJ e CSLL de empresas da área da saúde que atendam aos requisitos legais.</p>
+
+    <ul class="benefits">
+      <li>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
+        Simulação gratuita e personalizada.
+      </li>
+      <li>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+        Possibilidade de redução legal de impostos.
+      </li>
+      <li>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+        Análise especializada.
+      </li>
+    </ul>
+
+    <div class="specialist">
+      <div class="avatar" id="avatar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div>
+        <div class="spec-name" id="specName"></div>
+        <div class="spec-role" id="specRole"></div>
+      </div>
+    </div>
+
+    <button class="btn-cta" type="button" id="startBtn">
+      Calcular minha economia
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+    <p class="note">Gratuito, rápido e sem compromisso.</p>
+  </section>
+
+  <!-- 02 · Faturamento -->
+  <section class="screen" id="s2" data-step="2">
+    <h1 class="q-title">Qual é o <span class="highlight">faturamento mensal</span> médio da sua empresa?</h1>
+    <p class="sub">Considere a média de faturamento dos últimos 12 meses.</p>
+    <input class="money" id="money" type="text" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" aria-label="Faturamento mensal médio">
+    <p class="helper">Essa informação será utilizada para estimar seu potencial de economia tributária.</p>
+    <button class="btn-cta mt" type="button" id="next2" disabled>
+      Continuar
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+  </section>
+
+  <!-- 03 · Regime tributário -->
+  <section class="screen" id="s3" data-step="3">
+    <h1 class="q-title">Qual é o <span class="highlight">regime tributário</span> da sua empresa?</h1>
+    <p class="sub">Selecione o regime tributário utilizado atualmente.</p>
+    <div class="options" id="regimeOptions" role="radiogroup" aria-label="Regime tributário">
+      <button class="opt" type="button" role="radio" aria-checked="false" data-value="Simples Nacional">Simples Nacional<span class="radio"></span></button>
+      <button class="opt" type="button" role="radio" aria-checked="false" data-value="Lucro Presumido">Lucro Presumido<span class="radio"></span></button>
+      <button class="opt" type="button" role="radio" aria-checked="false" data-value="Lucro Real">Lucro Real<span class="radio"></span></button>
+      <button class="opt" type="button" role="radio" aria-checked="false" data-value="Não sei informar">Não sei informar<span class="radio"></span></button>
+    </div>
+    <button class="btn-cta mt" type="button" id="next3" disabled>
+      Continuar
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+  </section>
+
+  <!-- 04 · Exames ou procedimentos -->
+  <section class="screen" id="s4" data-step="4">
+    <h1 class="q-title">Sua empresa realiza <span class="highlight">exames ou procedimentos</span> além de consultas?</h1>
+    <p class="sub">A Equiparação Hospitalar pode beneficiar empresas que realizam determinados exames, cirurgias e procedimentos, desde que atendam aos requisitos legais.</p>
+    <div class="options" id="procOptions" role="radiogroup" aria-label="Exames ou procedimentos">
+      <button class="opt" type="button" role="radio" aria-checked="false" data-value="true">Sim, realizamos exames ou procedimentos.<span class="radio"></span></button>
+      <button class="opt" type="button" role="radio" aria-checked="false" data-value="false">Não, realizamos apenas consultas.<span class="radio"></span></button>
+    </div>
+    <p class="italic-note">Consultas médicas simples não se enquadram nesse benefício.</p>
+    <button class="btn-cta mt" type="button" id="next4" disabled>
+      Continuar
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+  </section>
+
+  <!-- 05 · Dados -->
+  <section class="screen" id="s5" data-step="5">
+    <h1 class="q-title">Receba seu resultado pelo <span class="highlight">WhatsApp.</span></h1>
+    <p class="sub">Estamos a um passo de finalizar sua pré-análise. Preencha seus dados para que nossa equipe possa avaliar as possibilidades de economia tributária da sua empresa.</p>
+
+    <form class="form" id="leadForm" novalidate>
+      <div class="field">
+        <label for="nome">Nome completo</label>
+        <input class="input" id="nome" name="nome" type="text" autocomplete="name" placeholder="Digite seu nome e sobrenome.">
+        <div class="error" id="nomeErr">Informe seu nome.</div>
+      </div>
+      <div class="field">
+        <label for="email">E-mail <span>(opcional)</span></label>
+        <input class="input" id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Digite seu melhor e-mail.">
+        <div class="error" id="emailErr">E-mail inválido.</div>
+      </div>
+      <div class="field">
+        <label for="whatsapp">WhatsApp</label>
+        <input class="input" id="whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(00) 00000-0000">
+        <div class="error" id="whatsErr">Informe um WhatsApp válido com DDD.</div>
+      </div>
+
+      <label class="consent">
+        <input type="checkbox" id="consent">
+        <span>Concordo com o uso dos meus dados para receber a análise, conforme a <a href="#" target="_blank" rel="noopener" data-privacy>Política de Privacidade</a>.</span>
+      </label>
+
+      <button class="btn-cta mt" type="submit" id="submitBtn" disabled>
+        Receber minha simulação
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+
+      <p class="privacy-note">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Seus dados serão utilizados para o envio da análise e atendimento relacionado, conforme nossa <a href="#" target="_blank" rel="noopener" data-privacy>Política de Privacidade</a>.</span>
+      </p>
+    </form>
+  </section>
+
+  <!-- Sucesso -->
+  <section class="screen" id="s6" data-step="6">
+    <div class="success-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
+    </div>
+    <h1 class="success-title">Sua solicitação foi <span class="highlight">recebida!</span></h1>
+    <p class="success-text">Nossa equipe irá analisar as informações da sua empresa para identificar as possibilidades de economia tributária.</p>
+    <p class="success-text">Em breve, entraremos em contato pelo WhatsApp.</p>
+
+    <div class="antecipar">
+      <h2>Deseja <span class="highlight">antecipar</span> o atendimento?</h2>
+      <a class="btn-cta" id="waBtn" href="#" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+        Falar com um especialista
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  var C = window.CONFIG;
+  var TOTAL = 5;
+
+  var state = {
+    step: 1,
+    faturamento: 0,
+    regime: null,
+    procedimentos: null,
+    nome: "",
+    email: "",
+    whatsapp: "",
+    eventId: null,
+    leadFired: false,
+    utms: {}
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var ARROW = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+  var SPINNER = '<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+
+  /* ---------- UTMs ---------- */
+  var qs = new URLSearchParams(window.location.search);
+  ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid", "gclid"].forEach(function (k) {
+    var v = qs.get(k);
+    if (v) state.utms[k] = v;
+  });
+
+  /* ---------- Marca ---------- */
+  function escapeAttr(s) { return String(s).replace(/"/g, "&quot;"); }
+  document.title = "Calculadora de Economia Tributária | " + C.brandName;
+  document.querySelectorAll("[data-brand-logo]").forEach(function (el) {
+    if (C.logoUrl) {
+      el.innerHTML = '<img src="' + escapeAttr(C.logoUrl) + '" alt="' + escapeAttr(C.brandName) + '">';
+    } else {
+      el.textContent = C.brandInitials;
+    }
+  });
+  $("specName").textContent = C.specialist.name;
+  $("specRole").textContent = C.specialist.role;
+  if (C.specialist.photoUrl) {
+    $("avatar").innerHTML = '<img src="' + escapeAttr(C.specialist.photoUrl) + '" alt="' + escapeAttr(C.specialist.name) + '">';
+  }
+  document.querySelectorAll("[data-privacy]").forEach(function (a) { a.href = C.privacyPolicyUrl || "#"; });
+
+  /* ---------- Pixel da Meta ---------- */
+  if (C.pixelId) {
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = "2.0"; n.queue = []; t = b.createElement(e); t.async = !0;
+      t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+    fbq("init", String(C.pixelId).trim());
+    fbq("track", "PageView");
+  }
+
+  function fireLead() {
+    if (state.leadFired) return;
+    state.leadFired = true;
+    if (typeof window.fbq === "function") {
+      fbq("track", "Lead", {
+        content_name: "Calculadora de Economia Tributária",
+        content_category: "Equiparação Hospitalar",
+        regime_tributario: state.regime,
+        faz_procedimentos: state.procedimentos ? "sim" : "nao",
+        faturamento_mensal: state.faturamento
+      }, { eventID: state.eventId });
+    }
+  }
+
+  /* ---------- Navegação ---------- */
+  function go(step) {
+    state.step = step;
+    document.querySelectorAll(".screen").forEach(function (s) {
+      s.classList.toggle("active", Number(s.dataset.step) === step);
+    });
+    var inFlow = step >= 2;
+    $("stepHeader").style.display = inFlow ? "flex" : "none";
+    $("progress").style.display = inFlow ? "block" : "none";
+    $("progressBar").style.width = (Math.min(step, TOTAL) / TOTAL * 100) + "%";
+    $("counter").textContent = String(Math.min(step, TOTAL)).padStart(2, "0") + " de 0" + TOTAL;
+    $("backBtn").classList.toggle("is-hidden", step === 6);
+    $("counter").classList.toggle("is-hidden", step === 6);
+    window.scrollTo(0, 0);
+    if (step === 2) setTimeout(function () { $("money").focus(); }, 60);
+  }
+
+  $("startBtn").addEventListener("click", function () { go(2); });
+  $("backBtn").addEventListener("click", function () { if (state.step > 1 && state.step < 6) go(state.step - 1); });
+
+  /* ---------- Etapa 2: faturamento ---------- */
+  function brl(v) {
+    return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }).replace(/ /g, " ");
+  }
+  var money = $("money");
+  money.addEventListener("input", function () {
+    var digits = money.value.replace(/\D/g, "").replace(/^0+/, "").slice(0, 13);
+    state.faturamento = digits ? parseInt(digits, 10) / 100 : 0;
+    money.value = digits ? brl(state.faturamento) : "";
+    $("next2").disabled = state.faturamento <= 0;
+  });
+  money.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && state.faturamento > 0) go(3);
+  });
+  $("next2").addEventListener("click", function () { go(3); });
+
+  /* ---------- Etapas 3 e 4: opções ---------- */
+  function bindOptions(containerId, onPick) {
+    var opts = document.querySelectorAll("#" + containerId + " .opt");
+    opts.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        opts.forEach(function (o) { o.classList.remove("selected"); o.setAttribute("aria-checked", "false"); });
+        btn.classList.add("selected");
+        btn.setAttribute("aria-checked", "true");
+        onPick(btn.dataset.value);
+      });
+    });
+  }
+  bindOptions("regimeOptions", function (v) { state.regime = v; $("next3").disabled = false; });
+  bindOptions("procOptions", function (v) { state.procedimentos = v === "true"; $("next4").disabled = false; });
+  $("next3").addEventListener("click", function () { go(4); });
+  $("next4").addEventListener("click", function () { go(5); });
+
+  /* ---------- Etapa 5: dados ---------- */
+  var nome = $("nome"), email = $("email"), whats = $("whatsapp"), consent = $("consent");
+
+  function maskPhone(v) {
+    var d = v.replace(/\D/g, "").slice(0, 11);
+    if (!d.length) return "";
+    if (d.length <= 2) return "(" + d;
+    if (d.length <= 6) return "(" + d.slice(0, 2) + ") " + d.slice(2);
+    if (d.length <= 10) return "(" + d.slice(0, 2) + ") " + d.slice(2, 6) + "-" + d.slice(6);
+    return "(" + d.slice(0, 2) + ") " + d.slice(2, 7) + "-" + d.slice(7);
+  }
+  var validNome = function () { return nome.value.trim().length >= 3; };
+  var validEmail = function () { var v = email.value.trim(); return !v || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); };
+  var validWhats = function () { var n = whats.value.replace(/\D/g, "").length; return n === 10 || n === 11; };
+
+  function refresh() {
+    $("submitBtn").disabled = !(validNome() && validEmail() && validWhats() && consent.checked);
+  }
+  function showErr(input, errId, ok) {
+    input.classList.toggle("invalid", !ok);
+    $(errId).classList.toggle("show", !ok);
+  }
+
+  whats.addEventListener("input", function () { whats.value = maskPhone(whats.value); if (validWhats()) showErr(whats, "whatsErr", true); refresh(); });
+  nome.addEventListener("input", function () { if (validNome()) showErr(nome, "nomeErr", true); refresh(); });
+  email.addEventListener("input", function () { if (validEmail()) showErr(email, "emailErr", true); refresh(); });
+  consent.addEventListener("change", refresh);
+  nome.addEventListener("blur", function () { if (nome.value) showErr(nome, "nomeErr", validNome()); });
+  email.addEventListener("blur", function () { showErr(email, "emailErr", validEmail()); });
+  whats.addEventListener("blur", function () { if (whats.value) showErr(whats, "whatsErr", validWhats()); });
+
+  /* ---------- Mensagem do WhatsApp ---------- */
+  function buildMessage() {
+    var lines = [
+      C.whatsappIntro,
+      "",
+      "*Nome:* " + state.nome,
+      "*E-mail:* " + (state.email || "Não informado"),
+      "*WhatsApp:* " + state.whatsapp,
+      "*Faturamento mensal médio:* " + brl(state.faturamento),
+      "*Regime tributário:* " + state.regime,
+      "*Realiza exames ou procedimentos:* " + (state.procedimentos ? "Sim" : "Não, apenas consultas")
+    ];
+    var u = state.utms;
+    if (C.includeUtmsInMessage && Object.keys(u).length) {
+      var origem = [u.utm_source, u.utm_medium, u.utm_campaign, u.utm_content].filter(Boolean).join(" / ");
+      if (origem) { lines.push("", "Origem: " + origem); }
+    }
+    return lines.join("\n");
+  }
+  function waUrl() {
+    return "https://wa.me/" + String(C.whatsappNumber).replace(/\D/g, "") + "?text=" + encodeURIComponent(buildMessage());
+  }
+
+  /* ---------- Webhook opcional ---------- */
+  function sendWebhook() {
+    if (!C.webhookUrl) return;
+    var data = {
+      nome: state.nome,
+      email: state.email,
+      whatsapp: state.whatsapp,
+      whatsapp_digitos: "55" + state.whatsapp.replace(/\D/g, ""),
+      faturamento_mensal: state.faturamento.toFixed(2),
+      regime_tributario: state.regime,
+      faz_procedimentos: state.procedimentos ? "sim" : "nao",
+      event_id: state.eventId,
+      pagina: window.location.href.split("?")[0],
+      criado_em: new Date().toISOString()
+    };
+    Object.keys(state.utms).forEach(function (k) { data[k] = state.utms[k]; });
+    try {
+      fetch(C.webhookUrl, { method: "POST", mode: "no-cors", keepalive: true, body: new URLSearchParams(data) }).catch(function () {});
+    } catch (e) {}
+  }
+
+  /* ---------- Ida para o WhatsApp: dispara o Lead ---------- */
+  function goToWhatsApp(url, e) {
+    fireLead();
+    if (typeof window.fbq === "function") {
+      // dá tempo do pixel registrar antes de sair da página
+      if (e) e.preventDefault();
+      setTimeout(function () { window.location.href = url; }, 400);
+    } else if (!e) {
+      window.location.href = url;
+    }
+  }
+
+  $("leadForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if ($("submitBtn").disabled) return;
+    state.nome = nome.value.trim();
+    state.email = email.value.trim();
+    state.whatsapp = whats.value.trim();
+    state.eventId = "lead_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+
+    var btn = $("submitBtn");
+    btn.disabled = true;
+    btn.innerHTML = SPINNER + "Enviando";
+    sendWebhook();
+
+    var url = waUrl();
+    $("waBtn").href = url;
+
+    setTimeout(function () {
+      if (C.redirectOnSubmit) {
+        goToWhatsApp(url);
+      } else {
+        btn.innerHTML = "Receber minha simulação" + ARROW;
+        go(6);
+      }
+    }, 700);
+  });
+
+  $("waBtn").addEventListener("click", function (e) {
+    goToWhatsApp($("waBtn").href, e);
+  });
+
+  go(1);
+})();
+</script>
+</body>
+</html>
